@@ -1,5 +1,5 @@
 # wikiguess
-Aplikacja do codzinnego zgadywania artykułów z wikipedii
+Aplikacja do codzinnego zgadywania artykułów z Wikipedii
 
 ## Diagram komunikacji
 
