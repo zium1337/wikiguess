@@ -1,2 +1,10 @@
+# backend
+backend/target/
+backend/.env
+
 # env
 .env
+
+# IDE
+.idea/
+.vscode/
