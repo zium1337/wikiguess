@@ -10,12 +10,20 @@ use crate::AppState;
 
 // --- Auth and user related ---
 
-// Register
+#[utoipa::path(
+    post,
+    path = "/auth/register",
+    request_body = RegisterRequest,
+    responses(
+        (status = 201, description = "User registered", body = AuthResponse),
+        (status = 400, description = "Invalid input")
+    ),
+    tag = "Auth"
+)]
 pub async fn register(
     State(state): State<AppState>,
     Json(input): Json<RegisterRequest>,
 ) -> Result<(StatusCode, Json<AuthResponse>), (StatusCode, String)> {
-    // hopium że hashowanie hasła działa :prey: (w testach działało)
     let hashed = bcrypt::hash(&input.password, bcrypt::DEFAULT_COST)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
@@ -28,7 +36,6 @@ pub async fn register(
     .fetch_one(&state.pool)
     .await
     .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
-    // await jest tak bardzo niezrozumiałe dla mnie. Dlaczego to musi być przed map_err. To nie ma sensu 3:<
 
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -36,8 +43,16 @@ pub async fn register(
     Ok((StatusCode::CREATED, Json(AuthResponse { token, user })))
 }
 
-
-// Login
+#[utoipa::path(
+    post,
+    path = "/auth/login",
+    request_body = LoginRequest,
+    responses(
+        (status = 200, description = "Login successful", body = AuthResponse),
+        (status = 401, description = "Invalid credentials")
+    ),
+    tag = "Auth"
+)]
 pub async fn login(
     State(state): State<AppState>,
     Json(input): Json<LoginRequest>,
@@ -48,7 +63,6 @@ pub async fn login(
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
         .ok_or((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
-        // aaaaaaaaaaaaa
 
     let valid = bcrypt::verify(&input.password, &user.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -59,12 +73,23 @@ pub async fn login(
 
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-    // to_string() 🙃🔫
 
     Ok(Json(AuthResponse { token, user }))
 }
 
-// Change user password
+#[utoipa::path(
+    patch,
+    path = "/user/change-password/{id}",
+    request_body = ChangePasswordRequest,
+    params(("id" = Uuid, Path, description = "User ID")),
+    responses(
+        (status = 204, description = "Password changed"),
+        (status = 401, description = "Wrong old password"),
+        (status = 403, description = "Forbidden")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn change_password(
     State(state): State<AppState>,
     auth: AuthUser,
@@ -102,8 +127,17 @@ pub async fn change_password(
     Ok(StatusCode::NO_CONTENT)
 }
 
-
-// Delete user
+#[utoipa::path(
+    delete,
+    path = "/user/{id}",
+    params(("id" = Uuid, Path, description = "User ID")),
+    responses(
+        (status = 204, description = "User deleted"),
+        (status = 403, description = "Forbidden")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn delete_user(
     State(state): State<AppState>,
     auth: AuthUser,
@@ -130,7 +164,15 @@ pub async fn delete_user(
 
 // --- Article ---
 
-// Get today's article
+#[utoipa::path(
+    get,
+    path = "/article/today",
+    responses(
+        (status = 200, description = "Today's article", body = Article),
+        (status = 404, description = "No article for today")
+    ),
+    tag = "Article"
+)]
 pub async fn get_today_article(
     State(state): State<AppState>,
 ) -> Result<Json<Article>, (StatusCode, String)> {
@@ -140,13 +182,21 @@ pub async fn get_today_article(
     .fetch_optional(&state.pool)
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-    .ok_or((StatusCode::NOT_FOUND, "No article for today :(".to_string()))?;
+    .ok_or((StatusCode::NOT_FOUND, "No article for today".to_string()))?;
 
     Ok(Json(article))
 }
 
-
-// Update today's article
+#[utoipa::path(
+    patch,
+    path = "/article/today",
+    request_body = UpdateArticleRequest,
+    responses(
+        (status = 200, description = "Article updated", body = Article),
+        (status = 404, description = "No article for today")
+    ),
+    tag = "Article"
+)]
 pub async fn update_today_article(
     State(state): State<AppState>,
     Json(input): Json<UpdateArticleRequest>,
@@ -165,13 +215,19 @@ pub async fn update_today_article(
     .fetch_optional(&state.pool)
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-    .ok_or((StatusCode::NOT_FOUND, "No article for today :(".to_string()))?;
+    .ok_or((StatusCode::NOT_FOUND, "No article for today".to_string()))?;
 
     Ok(Json(article))
 }
 
-
-// Today's article stats
+#[utoipa::path(
+    get,
+    path = "/article/stats",
+    responses(
+        (status = 200, description = "Global stats for today", body = ArticleStatsResponse)
+    ),
+    tag = "Article"
+)]
 pub async fn get_article_stats(
     State(state): State<AppState>,
 ) -> Result<Json<ArticleStatsResponse>, (StatusCode, String)> {
@@ -194,8 +250,14 @@ pub async fn get_article_stats(
     }))
 }
 
-
-// Create article history stats
+#[utoipa::path(
+    post,
+    path = "/article/history",
+    responses(
+        (status = 200, description = "Article history with stats", body = Vec<ArticleHistoryEntry>)
+    ),
+    tag = "Article"
+)]
 pub async fn create_article_history(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<ArticleHistoryEntry>>, (StatusCode, String)> {
@@ -234,7 +296,19 @@ pub async fn create_article_history(
     Ok(Json(history))
 }
 
-// Get user stats
+// --- User stats ---
+
+#[utoipa::path(
+    post,
+    path = "/user/stats",
+    request_body = UserStatsRequest,
+    responses(
+        (status = 201, description = "Stats saved", body = GuessCount),
+        (status = 400, description = "Invalid input")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn post_user_stats(
     State(state): State<AppState>,
     auth: AuthUser,
