@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   // mock for now
+  // will later implement preventing access via direct URL if not authenticated)
   const isLoggedIn = true;
 
   return (
