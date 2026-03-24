@@ -5,11 +5,13 @@ const Header = () => {
   const isLoggedIn = true;
 
   return (
-    <header>
-      <div className="flex justify-between items-center">
-        <Link to="/">Wikiguess</Link>
+    <header className="mb-15">
+      <div className="flex justify-between items-center bg-sky-50 rounded-md p-5">
+        <Link to="/" className="text-5xl">
+          Wikiguess
+        </Link>
 
-        <nav className="flex gap-5">
+        <nav className="flex gap-10 items-center">
           <Link to="/game">Game</Link>
 
           {!isLoggedIn && (
