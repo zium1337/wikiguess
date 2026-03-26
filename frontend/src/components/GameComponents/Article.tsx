@@ -29,7 +29,7 @@ function Article({ gameState }: ArticleProps) {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center mt-10">
       {gameState.gameStatus === "IN_PROGRESS" && (
         <div className="flex mb-20 text-8xl">
           <CensorIcon className="w-25 h-25 inline-block" />
