@@ -7,6 +7,7 @@ export type GameStatus = "IN_PROGRESS" | "WON" | "LOST";
 
 export interface GameStateDto {
   totalSentencesNum: number;
+  guessesLeftNum: number;
   revealedSentences: SentenceDto[];
   gameStatus: GameStatus;
   articleTitle?: string;
