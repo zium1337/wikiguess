@@ -50,15 +50,15 @@ export const mocStatekWinGame: GameStateDto = {
   revealedSentences: [
     {
       index: 0,
-      text: "_censoredWord_ is a 2001 American animated fantasy comedy film directed by Andrew Adamson and Vicky Jenson.",
+      text: "Shrek is a 2001 American animated fantasy comedy film directed by Andrew Adamson and Vicky Jenson.",
     },
     {
       index: 1,
-      text: "It is the first in the _censoredWord_ film series, and stars Mike Myers, Eddie Murphy, Cameron Diaz and John Lithgow.",
+      text: "It is the first in the Shrek film series, and stars Mike Myers, Eddie Murphy, Cameron Diaz and John Lithgow.",
     },
     {
       index: 2,
-      text: "In the film, an embittered ogre named _censoredWord_ finds his home in the swamp overrun by fairy tale creatures.",
+      text: "In the film, an embittered ogre named Shrek finds his home in the swamp overrun by fairy tale creatures.",
     },
   ],
   gameStatus: "WON",
@@ -71,19 +71,19 @@ export const mockStateLostGame: GameStateDto = {
   revealedSentences: [
     {
       index: 0,
-      text: "_censoredWord_ is a 2001 American animated fantasy comedy film directed by Andrew Adamson and Vicky Jenson.",
+      text: "Shrek is a 2001 American animated fantasy comedy film directed by Andrew Adamson and Vicky Jenson.",
     },
     {
       index: 1,
-      text: "It is the first in the _censoredWord_ film series, and stars Mike Myers, Eddie Murphy, Cameron Diaz and John Lithgow.",
+      text: "It is the first in the Shrek film series, and stars Mike Myers, Eddie Murphy, Cameron Diaz and John Lithgow.",
     },
     {
       index: 2,
-      text: "In the film, an embittered ogre named _censoredWord_ finds his home in the swamp overrun by fairy tale creatures.",
+      text: "In the film, an embittered ogre named Shrek finds his home in the swamp overrun by fairy tale creatures.",
     },
     {
       index: 3,
-      text: "With the help of Donkey, _censoredWord_ makes a pact with Lord Farquaad to rescue Princess Fiona.",
+      text: "With the help of Donkey, Shrek makes a pact with Lord Farquaad to rescue Princess Fiona.",
     },
   ],
   gameStatus: "LOST",
