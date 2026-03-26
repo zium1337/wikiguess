@@ -2,6 +2,7 @@ import type { GameStateDto } from "../models/GameModels";
 
 export const mockStateStartGame: GameStateDto = {
   totalSentencesNum: 4,
+  guessesLeftNum: 4,
   revealedSentences: [
     {
       index: 0,
@@ -13,6 +14,7 @@ export const mockStateStartGame: GameStateDto = {
 
 export const mockStateAfterWrongGuess1: GameStateDto = {
   totalSentencesNum: 4,
+  guessesLeftNum: 3,
   revealedSentences: [
     {
       index: 0,
@@ -28,6 +30,7 @@ export const mockStateAfterWrongGuess1: GameStateDto = {
 
 export const mockStateAfterWrongGuess2: GameStateDto = {
   totalSentencesNum: 4,
+  guessesLeftNum: 2,
   revealedSentences: [
     {
       index: 0,
@@ -45,8 +48,9 @@ export const mockStateAfterWrongGuess2: GameStateDto = {
   gameStatus: "IN_PROGRESS",
 };
 
-export const mocStatekWinGame: GameStateDto = {
+export const mocStateWinGame: GameStateDto = {
   totalSentencesNum: 4,
+  guessesLeftNum: 1,
   revealedSentences: [
     {
       index: 0,
@@ -60,6 +64,10 @@ export const mocStatekWinGame: GameStateDto = {
       index: 2,
       text: "In the film, an embittered ogre named Shrek finds his home in the swamp overrun by fairy tale creatures.",
     },
+    {
+      index: 3,
+      text: "With the help of Donkey, Shrek makes a pact with Lord Farquaad to rescue Princess Fiona.",
+    },
   ],
   gameStatus: "WON",
   articleTitle: "Shrek",
@@ -68,6 +76,7 @@ export const mocStatekWinGame: GameStateDto = {
 
 export const mockStateLostGame: GameStateDto = {
   totalSentencesNum: 4,
+  guessesLeftNum: 0,
   revealedSentences: [
     {
       index: 0,

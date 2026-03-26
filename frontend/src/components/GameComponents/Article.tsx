@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { GameStateDto } from "../../models/GameModels";
-import { mockStateAfterWrongGuess2 } from "../../mocks/gameMocks";
+import { mocStateWinGame } from "../../mocks/gameMocks";
 import { CensorIcon } from "../../assets/CensorIcon";
 import { useLoading } from "../../store/LoadingContext";
 
@@ -13,7 +13,7 @@ function Article() {
     setIsLoading(true);
     // mock fetching data
     const timeout = setTimeout(() => {
-      setGameState(mockStateAfterWrongGuess2);
+      setGameState(mocStateWinGame);
 
       setIsLoading(false);
     }, 2000);
