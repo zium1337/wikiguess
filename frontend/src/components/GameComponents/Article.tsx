@@ -1,12 +1,12 @@
 import { useEffect, useState, type ReactNode } from "react";
-import LoadingOverlay from "../LoadingOverlay";
 import type { GameStateDto } from "../../models/GameModels";
 import { mockStateAfterWrongGuess2 } from "../../mocks/gameMocks";
 import { CensorIcon } from "../../assets/CensorIcon";
+import { useLoading } from "../../store/LoadingContext";
 
 function Article() {
   const MAREKD_AS_CENSORED = "_censoredWord_";
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isLoading, setIsLoading } = useLoading();
   const [gameState, setGameState] = useState<GameStateDto>();
 
   useEffect(() => {
@@ -42,8 +42,6 @@ function Article() {
 
   return (
     <div>
-      {isLoading && <LoadingOverlay />}
-
       {!isLoading && (
         <div className="flex flex-col items-center">
           <div className="text-4xl mb-15">
