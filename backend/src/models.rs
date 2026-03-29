@@ -2,14 +2,32 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow)]
 pub struct User {
     pub user_id: Uuid,
     pub email: String,
     pub username: String,
-    #[serde(skip_serializing)]
     pub password: String,
     pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct UserApiResponse {
+    pub user_id: Uuid,
+    pub email: String,
+    pub username: String,
+    pub created_at: DateTime<Utc>,
+}
+
+impl From<User> for UserApiResponse {
+    fn from(user: User) -> Self {
+        Self {
+            user_id: user.user_id,
+            email: user.email,
+            username: user.username,
+            created_at: user.created_at,
+        }
+    }
 }
 
 #[derive(Debug, sqlx::FromRow, Serialize)]
