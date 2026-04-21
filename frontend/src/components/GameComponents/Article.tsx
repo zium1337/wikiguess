@@ -7,13 +7,13 @@ interface ArticleProps {
 }
 
 function Article({ gameState }: ArticleProps) {
-  const MAREKD_AS_CENSORED = "_censoredWord_";
+  const MARKED_AS_CENSORED = "_censoredWord_";
 
   const censorSentence = (sentence: string): ReactNode => {
     const wordsInSentence = sentence.split(" ");
 
     return wordsInSentence.map((word, index) => {
-      const shouldBeCensored = word === MAREKD_AS_CENSORED;
+      const shouldBeCensored = word === MARKED_AS_CENSORED;
 
       return (
         <span key={index}>
