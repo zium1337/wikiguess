@@ -8,25 +8,28 @@ import Stats from "./pages/Stats";
 import Layout from "./components/Layout";
 import NotFound from "./pages/NotFound";
 import { LoadingProvider } from "./store/LoadingContext";
+import { AuthProvider } from "./store/AuthContext";
 
 function App() {
   return (
-    <LoadingProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Game />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/stats" element={<Stats />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </LoadingProvider>
+    <AuthProvider>
+      <LoadingProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Game />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/stats" element={<Stats />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </LoadingProvider>
+    </AuthProvider>
   );
 }
 
