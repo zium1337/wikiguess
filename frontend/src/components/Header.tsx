@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import AppButton from "./AppButton";
 
 const Header = () => {
   // mock for now
   // will later implement preventing access via direct URL if not authenticated)
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <header className="mb-20">
@@ -26,6 +27,7 @@ const Header = () => {
             <>
               <Link to="/profile">Profile</Link>
               <Link to="/stats">Stats</Link>
+              <AppButton text="Log out" width={150} height={50} />
             </>
           )}
         </nav>
