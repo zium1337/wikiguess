@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
 import AppButton from "../components/AppButton";
-import { mockRegister } from "../mocks/authMocks";
 import { AuthError } from "../models/AuthModels";
 import { useLoading } from "../store/LoadingContext";
+import { useAuth } from "../store/AuthContext";
 
 function Register() {
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -15,6 +15,7 @@ function Register() {
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
 
   const { setIsLoading } = useLoading();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const validateForm = (): string | null => {
@@ -48,7 +49,7 @@ function Register() {
     setIsLoading(true);
 
     try {
-      await mockRegister({ username, email, password });
+      await register({ username, email, password });
       navigate("/");
     } catch (err) {
       if (err instanceof AuthError) {

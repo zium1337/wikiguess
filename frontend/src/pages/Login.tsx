@@ -3,8 +3,8 @@ import AppButton from "../components/AppButton";
 import InputField from "../components/InputField";
 import { useNavigate } from "react-router-dom";
 import { useLoading } from "../store/LoadingContext";
-import { mockLogin } from "../mocks/authMocks";
 import { AuthError } from "../models/AuthModels";
+import { useAuth } from "../store/AuthContext";
 
 function Login() {
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -13,6 +13,7 @@ function Login() {
   const [password, setPassword] = useState<string>("");
 
   const { setIsLoading } = useLoading();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const validateForm = (): string | null => {
@@ -38,7 +39,7 @@ function Login() {
     setIsLoading(true);
 
     try {
-      await mockLogin({ email, password });
+      await login({ email, password });
       navigate("/");
     } catch (err) {
       if (err instanceof AuthError) {
