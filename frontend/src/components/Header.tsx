@@ -3,7 +3,7 @@ import AppButton from "./AppButton";
 import { useAuth } from "../store/AuthContext";
 
 const Header = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className="mb-20">
@@ -26,7 +26,12 @@ const Header = () => {
             <>
               <Link to="/profile">Profile</Link>
               <Link to="/stats">Stats</Link>
-              <AppButton text="Log out" width={150} height={50} />
+              <AppButton
+                text="Log out"
+                width={150}
+                height={50}
+                onClick={logout}
+              />
             </>
           )}
         </nav>
