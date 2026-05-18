@@ -48,7 +48,7 @@ pub struct GuessCount {
 }
 
 #[derive(Deserialize)]
-pub struct CreateUser {
+pub struct RegisterRequest {
     pub email: String,
     pub username: String,
     pub password: String,
@@ -81,7 +81,7 @@ pub struct UpdateArticleRequest {
 #[derive(Serialize)]
 pub struct AuthResponse {
     pub token: String,
-    pub user: User,
+    pub user: UserApiResponse,
 }
 
 #[derive(Serialize)]

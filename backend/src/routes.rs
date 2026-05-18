@@ -61,7 +61,7 @@ pub async fn login(
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
     // to_string() 🙃🔫
 
-    Ok(Json(AuthResponse { token, user }))
+    Ok(Json(AuthResponse { token, user: user.into() }))
 }
 
 // Change user password
