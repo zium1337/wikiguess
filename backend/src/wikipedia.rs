@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn two_sentence_count_two() {
-        /// U know, selfish - sell fish :D
+        // U know, selfish - sell fish :D
         assert_eq!(count_sentences("Selfish. How much?"), 2);
     }
 
