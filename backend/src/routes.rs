@@ -33,7 +33,7 @@ pub async fn register(
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok((StatusCode::CREATED, Json(AuthResponse { token, user })))
+    Ok((StatusCode::CREATED, Json(AuthResponse { token, user: user.into() })))
 }
 
 
