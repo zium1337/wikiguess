@@ -48,13 +48,51 @@ pub struct GuessCount {
 }
 
 #[derive(Deserialize)]
-pub struct CreateUser {
+pub struct RegisterRequest {
     pub email: String,
     pub username: String,
     pub password: String,
 }
 
 #[derive(Deserialize)]
-pub struct GuessRequest {
-    pub guess: String,
+pub struct LoginRequest {
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct ChangePasswordRequest {
+    pub old_password: String,
+    pub new_password: String,
+}
+
+#[derive(Deserialize)]
+pub struct UserStatsRequest {
+    pub num_guesses: i32,
+}
+
+#[derive(Deserialize)]
+pub struct UpdateArticleRequest {
+    pub url: Option<String>,
+    pub title: Option<String>,
+    pub description: Option<String>,
+}
+
+#[derive(Serialize)]
+pub struct AuthResponse {
+    pub token: String,
+    pub user: UserApiResponse,
+}
+
+#[derive(Serialize)]
+pub struct ArticleStatsResponse {
+    pub total_guesses: i64,
+    pub average_guesses: f64,
+    pub player_count: i64,
+}
+
+#[derive(Serialize)]
+pub struct ArticleHistoryEntry {
+    pub article: Article,
+    pub stats: ArticleStatsResponse,
 }
