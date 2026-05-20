@@ -16,6 +16,11 @@ export interface UserDto {
   created_at: string;
 }
 
+export interface PasswordChangeDto {
+  new_password: string;
+  old_password: string;
+}
+
 export interface AuthResponse {
   token: string;
   user: UserDto;
