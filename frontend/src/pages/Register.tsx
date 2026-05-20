@@ -87,6 +87,7 @@ function Register() {
         setUserInput={setPassword}
         width={800}
         height={80}
+        type="password"
       />
       <InputField
         placeholderText="Confirm Password..."
@@ -94,6 +95,7 @@ function Register() {
         setUserInput={setPasswordConfirmation}
         width={800}
         height={80}
+        type="password"
       />
 
       <AppButton text="Register account" width={400} height={90} />
