@@ -12,7 +12,7 @@ pub struct User {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct UserApiResponse {
     pub user_id: Uuid,
     pub email: String,
@@ -31,7 +31,7 @@ impl From<User> for UserApiResponse {
     }
 }
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow, Serialize, ToSchema)]
 pub struct Article {
     pub article_id: Uuid,
     pub url: String,

@@ -49,7 +49,16 @@ pub async fn register(
     ))
 }
 
-// Login
+#[utoipa::path(
+    post,
+    path = "/auth/login",
+    request_body = LoginRequest,
+    responses(
+        (status = 200, description = "Login successful", body = AuthResponse),
+        (status = 401, description = "Invalid credentials")
+    ),
+    tag = "Auth"
+)]
 pub async fn login(
     State(state): State<AppState>,
     Json(input): Json<LoginRequest>,
@@ -131,7 +140,17 @@ pub async fn change_password(
     Ok(StatusCode::NO_CONTENT)
 }
 
-// Delete user
+#[utoipa::path(
+    delete,
+    path = "/user/{id}",
+    params(("id" = Uuid, Path, description = "User ID")),
+    responses(
+        (status = 204, description = "User deleted"),
+        (status = 403, description = "Forbidden")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn delete_user(
     State(state): State<AppState>,
     auth: AuthUser,
@@ -184,7 +203,16 @@ pub async fn get_today_article(
     Ok(Json(article))
 }
 
-// Update today's article
+#[utoipa::path(
+    patch,
+    path = "/article/today",
+    request_body = UpdateArticleRequest,
+    responses(
+        (status = 200, description = "Article updated", body = Article),
+        (status = 404, description = "No article for today")
+    ),
+    tag = "Article"
+)]
 pub async fn update_today_article(
     State(state): State<AppState>,
     Json(input): Json<UpdateArticleRequest>,
@@ -208,7 +236,14 @@ pub async fn update_today_article(
     Ok(Json(article))
 }
 
-// Today's article stats
+#[utoipa::path(
+    get,
+    path = "/article/stats",
+    responses(
+        (status = 200, description = "Today's article stats", body = ArticleStatsResponse)
+    ),
+    tag = "Article"
+)]
 pub async fn get_article_stats(
     State(state): State<AppState>,
 ) -> Result<Json<ArticleStatsResponse>, (StatusCode, String)> {
@@ -231,7 +266,14 @@ pub async fn get_article_stats(
     }))
 }
 
-// Create article history stats
+#[utoipa::path(
+    post,
+    path = "/article/history",
+    responses(
+        (status = 200, description = "Article history with stats", body = [ArticleHistoryEntry])
+    ),
+    tag = "Article"
+)]
 pub async fn create_article_history(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<ArticleHistoryEntry>>, (StatusCode, String)> {
