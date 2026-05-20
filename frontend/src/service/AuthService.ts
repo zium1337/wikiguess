@@ -37,8 +37,19 @@ export const changePassword = async (
     await api.patch(`/user/change-password/${userId}`, dto);
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 401) {
-      throw new AuthError("PASSWORD_INCORRECT", "Current password is incorrect.");
+      throw new AuthError(
+        "PASSWORD_INCORRECT",
+        "Current password is incorrect.",
+      );
     }
+    throw mapToAuthError(err);
+  }
+};
+
+export const deleteAccount = async (userId: string): Promise<void> => {
+  try {
+    await api.delete(`/user/${userId}`);
+  } catch (err) {
     throw mapToAuthError(err);
   }
 };
