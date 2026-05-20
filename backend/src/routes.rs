@@ -1,12 +1,12 @@
+use crate::auth::{create_token, AuthUser};
+use crate::models::*;
+use crate::AppState;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
     Json,
 };
 use uuid::Uuid;
-use crate::auth::{create_token, AuthUser};
-use crate::models::*;
-use crate::AppState;
 
 // --- Auth and user related ---
 
@@ -40,19 +40,16 @@ pub async fn register(
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok((StatusCode::CREATED, Json(AuthResponse { token, user: user.into() })))
+    Ok((
+        StatusCode::CREATED,
+        Json(AuthResponse {
+            token,
+            user: user.into(),
+        }),
+    ))
 }
 
-#[utoipa::path(
-    post,
-    path = "/auth/login",
-    request_body = LoginRequest,
-    responses(
-        (status = 200, description = "Login successful", body = AuthResponse),
-        (status = 401, description = "Invalid credentials")
-    ),
-    tag = "Auth"
-)]
+// Login
 pub async fn login(
     State(state): State<AppState>,
     Json(input): Json<LoginRequest>,
@@ -63,6 +60,7 @@ pub async fn login(
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
         .ok_or((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
+    // aaaaaaaaaaaaa
 
     let valid = bcrypt::verify(&input.password, &user.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -74,7 +72,10 @@ pub async fn login(
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok(Json(AuthResponse { token, user: user.into() }))
+    Ok(Json(AuthResponse {
+        token,
+        user: user.into(),
+    }))
 }
 
 #[utoipa::path(
@@ -97,7 +98,10 @@ pub async fn change_password(
     Json(input): Json<ChangePasswordRequest>,
 ) -> Result<StatusCode, (StatusCode, String)> {
     if auth.user_id != user_id {
-        return Err((StatusCode::FORBIDDEN, "Cannot change another user's password".to_string()));
+        return Err((
+            StatusCode::FORBIDDEN,
+            "Cannot change another user's password".to_string(),
+        ));
     }
 
     let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE user_id = $1")
@@ -127,24 +131,17 @@ pub async fn change_password(
     Ok(StatusCode::NO_CONTENT)
 }
 
-#[utoipa::path(
-    delete,
-    path = "/user/{id}",
-    params(("id" = Uuid, Path, description = "User ID")),
-    responses(
-        (status = 204, description = "User deleted"),
-        (status = 403, description = "Forbidden")
-    ),
-    security(("bearer_auth" = [])),
-    tag = "User"
-)]
+// Delete user
 pub async fn delete_user(
     State(state): State<AppState>,
     auth: AuthUser,
     Path(user_id): Path<Uuid>,
 ) -> Result<StatusCode, (StatusCode, String)> {
     if auth.user_id != user_id {
-        return Err((StatusCode::FORBIDDEN, "Cannot delete another user".to_string()));
+        return Err((
+            StatusCode::FORBIDDEN,
+            "Cannot delete another user".to_string(),
+        ));
     }
 
     sqlx::query("DELETE FROM guess_counts WHERE user_id = $1")
@@ -187,16 +184,7 @@ pub async fn get_today_article(
     Ok(Json(article))
 }
 
-#[utoipa::path(
-    patch,
-    path = "/article/today",
-    request_body = UpdateArticleRequest,
-    responses(
-        (status = 200, description = "Article updated", body = Article),
-        (status = 404, description = "No article for today")
-    ),
-    tag = "Article"
-)]
+// Update today's article
 pub async fn update_today_article(
     State(state): State<AppState>,
     Json(input): Json<UpdateArticleRequest>,
@@ -220,14 +208,7 @@ pub async fn update_today_article(
     Ok(Json(article))
 }
 
-#[utoipa::path(
-    get,
-    path = "/article/stats",
-    responses(
-        (status = 200, description = "Global stats for today", body = ArticleStatsResponse)
-    ),
-    tag = "Article"
-)]
+// Today's article stats
 pub async fn get_article_stats(
     State(state): State<AppState>,
 ) -> Result<Json<ArticleStatsResponse>, (StatusCode, String)> {
@@ -250,14 +231,7 @@ pub async fn get_article_stats(
     }))
 }
 
-#[utoipa::path(
-    post,
-    path = "/article/history",
-    responses(
-        (status = 200, description = "Article history with stats", body = Vec<ArticleHistoryEntry>)
-    ),
-    tag = "Article"
-)]
+// Create article history stats
 pub async fn create_article_history(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<ArticleHistoryEntry>>, (StatusCode, String)> {

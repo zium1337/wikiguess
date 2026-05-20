@@ -47,11 +47,15 @@ impl FromRequestParts<AppState> for AuthUser {
             .headers
             .get("Authorization")
             .and_then(|v| v.to_str().ok())
-            .ok_or((StatusCode::UNAUTHORIZED, "Missing Authorization header".to_string()))?;
+            .ok_or((
+                StatusCode::UNAUTHORIZED,
+                "Missing Authorization header".to_string(),
+            ))?;
 
-        let token = auth_header
-            .strip_prefix("Bearer ")
-            .ok_or((StatusCode::UNAUTHORIZED, "Invalid Authorization format".to_string()))?;
+        let token = auth_header.strip_prefix("Bearer ").ok_or((
+            StatusCode::UNAUTHORIZED,
+            "Invalid Authorization format".to_string(),
+        ))?;
 
         let token_data = decode::<Claims>(
             token,
