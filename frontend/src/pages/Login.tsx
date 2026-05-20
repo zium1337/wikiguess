@@ -35,7 +35,6 @@ function Login() {
       return;
     }
 
-    // mock fetching data
     setIsLoading(true);
 
     try {

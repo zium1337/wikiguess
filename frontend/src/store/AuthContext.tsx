@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { LoginDto, RegisterDto, UserDto } from "../models/AuthModels";
-import { mockLogin, mockRegister } from "../mocks/authMocks";
+import * as authApi from "../service/AuthService";
 
 const TOKEN_STORAGE_KEY = "auth.token";
 const USER_STORAGE_KEY = "auth.user";
@@ -51,12 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (dto: LoginDto) => {
-    const res = await mockLogin(dto);
+    const res = await authApi.login(dto);
     persist(res.token, res.user);
   };
 
   const register = async (dto: RegisterDto) => {
-    const res = await mockRegister(dto);
+    const res = await authApi.register(dto);
     persist(res.token, res.user);
   };
 
