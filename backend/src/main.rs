@@ -1,10 +1,12 @@
 mod auth;
+mod game;
 mod models;
 mod routes;
 mod scheduler;
 mod wikipedia;
 
 use axum::{
+    http::{header, HeaderValue, Method},
     routing::{delete, get, patch, post},
     Router,
 };
@@ -33,12 +35,15 @@ pub struct AppState {
         routes::get_article_stats,
         routes::create_article_history,
         routes::post_user_stats,
+        routes::get_game_state,
+        routes::post_game_guess,
     ),
     components(schemas(
         UserApiResponse, Article, GuessCount,
         RegisterRequest, LoginRequest, ChangePasswordRequest,
         UserStatsRequest, UpdateArticleRequest,
         AuthResponse, ArticleStatsResponse, ArticleHistoryEntry,
+        SentenceDto, GameStatus, GameStateDto, GuessRequest,
     )),
     security(("bearer_auth" = [])),
     modifiers(&SecurityAddon),
@@ -46,6 +51,7 @@ pub struct AppState {
         (name = "Auth", description = "Registration and login"),
         (name = "Article", description = "Daily article and stats"),
         (name = "User", description = "User management and stats"),
+        (name = "Game", description = "Daily game state and guesses"),
     )
 )]
 struct ApiDoc;
@@ -90,6 +96,24 @@ async fn main() {
 
     let state = AppState { pool, jwt_secret };
 
+    let frontend_origin =
+        std::env::var("FRONTEND_ORIGIN").unwrap_or_else(|_| "http://localhost:5173".to_string());
+    let cors = CorsLayer::new()
+        .allow_origin(
+            frontend_origin
+                .parse::<HeaderValue>()
+                .expect("FRONTEND_ORIGIN must be a valid header value"),
+        )
+        .allow_credentials(true)
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PATCH,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
+        .allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE]);
+
     let app = Router::new()
         // Auth
         .route("/auth/register", post(routes::register))
@@ -104,9 +128,12 @@ async fn main() {
         // User management
         .route("/user/change-password/{id}", patch(routes::change_password))
         .route("/user/{id}", delete(routes::delete_user))
+        // Game
+        .route("/game/state", get(routes::get_game_state))
+        .route("/game/guess", post(routes::post_game_guess))
         // Swagger UI
         .merge(SwaggerUi::new("/docs").url("/api-docs/openapi.json", ApiDoc::openapi()))
-        .layer(CorsLayer::permissive())
+        .layer(cors)
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
