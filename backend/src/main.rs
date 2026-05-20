@@ -87,6 +87,11 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Failed to run database migrations");
+
     let http_client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .build()
