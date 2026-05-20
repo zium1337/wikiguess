@@ -6,6 +6,7 @@ const TOKEN_STORAGE_KEY = "auth.token";
 export const api = axios.create({
   baseURL: BACKEND_BASE_URL,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
