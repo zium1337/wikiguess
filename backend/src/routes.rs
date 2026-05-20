@@ -10,12 +10,20 @@ use uuid::Uuid;
 
 // --- Auth and user related ---
 
-// Register
+#[utoipa::path(
+    post,
+    path = "/auth/register",
+    request_body = RegisterRequest,
+    responses(
+        (status = 201, description = "User registered", body = AuthResponse),
+        (status = 400, description = "Invalid input")
+    ),
+    tag = "Auth"
+)]
 pub async fn register(
     State(state): State<AppState>,
     Json(input): Json<RegisterRequest>,
 ) -> Result<(StatusCode, Json<AuthResponse>), (StatusCode, String)> {
-    // hopium że hashowanie hasła działa :prey: (w testach działało)
     let hashed = bcrypt::hash(&input.password, bcrypt::DEFAULT_COST)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
@@ -28,7 +36,6 @@ pub async fn register(
     .fetch_one(&state.pool)
     .await
     .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))?;
-    // await jest tak bardzo niezrozumiałe dla mnie. Dlaczego to musi być przed map_err. To nie ma sensu 3:<
 
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -64,7 +71,6 @@ pub async fn login(
 
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-    // to_string() 🙃🔫
 
     Ok(Json(AuthResponse {
         token,
@@ -72,7 +78,19 @@ pub async fn login(
     }))
 }
 
-// Change user password
+#[utoipa::path(
+    patch,
+    path = "/user/change-password/{id}",
+    request_body = ChangePasswordRequest,
+    params(("id" = Uuid, Path, description = "User ID")),
+    responses(
+        (status = 204, description = "Password changed"),
+        (status = 401, description = "Wrong old password"),
+        (status = 403, description = "Forbidden")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn change_password(
     State(state): State<AppState>,
     auth: AuthUser,
@@ -143,7 +161,15 @@ pub async fn delete_user(
 
 // --- Article ---
 
-// Get today's article
+#[utoipa::path(
+    get,
+    path = "/article/today",
+    responses(
+        (status = 200, description = "Today's article", body = Article),
+        (status = 404, description = "No article for today")
+    ),
+    tag = "Article"
+)]
 pub async fn get_today_article(
     State(state): State<AppState>,
 ) -> Result<Json<Article>, (StatusCode, String)> {
@@ -153,7 +179,7 @@ pub async fn get_today_article(
     .fetch_optional(&state.pool)
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-    .ok_or((StatusCode::NOT_FOUND, "No article for today :(".to_string()))?;
+    .ok_or((StatusCode::NOT_FOUND, "No article for today".to_string()))?;
 
     Ok(Json(article))
 }
@@ -177,7 +203,7 @@ pub async fn update_today_article(
     .fetch_optional(&state.pool)
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-    .ok_or((StatusCode::NOT_FOUND, "No article for today :(".to_string()))?;
+    .ok_or((StatusCode::NOT_FOUND, "No article for today".to_string()))?;
 
     Ok(Json(article))
 }
@@ -244,7 +270,19 @@ pub async fn create_article_history(
     Ok(Json(history))
 }
 
-// Get user stats
+// --- User stats ---
+
+#[utoipa::path(
+    post,
+    path = "/user/stats",
+    request_body = UserStatsRequest,
+    responses(
+        (status = 201, description = "Stats saved", body = GuessCount),
+        (status = 400, description = "Invalid input")
+    ),
+    security(("bearer_auth" = [])),
+    tag = "User"
+)]
 pub async fn post_user_stats(
     State(state): State<AppState>,
     auth: AuthUser,

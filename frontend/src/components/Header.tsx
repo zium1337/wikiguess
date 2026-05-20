@@ -6,7 +6,7 @@ const Header = () => {
   const isLoggedIn = true;
 
   return (
-    <header className="mb-15">
+    <header className="mb-20">
       <div className="flex justify-between items-center bg-sky-50 rounded-md p-5">
         <Link to="/" className="text-5xl">
           Wikiguess
