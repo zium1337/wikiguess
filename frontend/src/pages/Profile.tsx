@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
 import { useAuth } from "../store/AuthContext";
 import { useLoading } from "../store/LoadingContext";
@@ -7,8 +8,9 @@ import { AuthError } from "../models/AuthModels";
 import * as authApi from "../service/AuthService";
 
 function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { setIsLoading } = useLoading();
+  const navigate = useNavigate();
 
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
@@ -61,6 +63,31 @@ function Profile() {
     }
   };
 
+  const deleteAccount = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete your account :( ? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await authApi.deleteAccount(user!.user_id);
+      logout();
+      navigate("/");
+    } catch (err) {
+      if (err instanceof AuthError) {
+        alert(err.message);
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="text-4xl mb-10">Welcome {user?.username}!</div>
@@ -99,7 +126,12 @@ function Profile() {
       </form>
 
       <div className="text-3xl">Delete Account</div>
-      <AppButton text="Delete Account" width={500} height={80} />
+      <AppButton
+        text="Delete Account"
+        width={500}
+        height={80}
+        onClick={deleteAccount}
+      />
     </div>
   );
 }
