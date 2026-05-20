@@ -3,18 +3,35 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-#[derive(Debug, sqlx::FromRow, Serialize, ToSchema)]
+#[derive(Debug, sqlx::FromRow)]
 pub struct User {
     pub user_id: Uuid,
     pub email: String,
     pub username: String,
-    #[serde(skip_serializing)]
-    #[schema(write_only)]
     pub password: String,
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, sqlx::FromRow, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
+pub struct UserApiResponse {
+    pub user_id: Uuid,
+    pub email: String,
+    pub username: String,
+    pub created_at: DateTime<Utc>,
+}
+
+impl From<User> for UserApiResponse {
+    fn from(user: User) -> Self {
+        Self {
+            user_id: user.user_id,
+            email: user.email,
+            username: user.username,
+            created_at: user.created_at,
+        }
+    }
+}
+
+#[derive(Debug, sqlx::FromRow, Serialize)]
 pub struct Article {
     pub article_id: Uuid,
     pub url: String,
@@ -69,7 +86,7 @@ pub struct UpdateArticleRequest {
 pub struct AuthResponse {
     /// JWT token
     pub token: String,
-    pub user: User,
+    pub user: UserApiResponse,
 }
 
 #[derive(Serialize, ToSchema)]

@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-lime-50;
+  @apply font-mono;
+  @apply text-xl;
+  @apply p-10;
+}
+
+nav a {
+  @apply hover:bg-sky-900 hover:text-white hover:p-2;
+}
