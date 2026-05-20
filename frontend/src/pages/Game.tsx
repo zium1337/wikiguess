@@ -2,42 +2,32 @@ import { useEffect, useState } from "react";
 import Article from "../components/GameComponents/Article";
 import InputField from "../components/InputField";
 import { useLoading } from "../store/LoadingContext";
-import {
-  mockStateStartGame,
-  mockStateAfterWrongGuess1,
-} from "../mocks/gameMocks";
 import type { GameStateDto } from "../models/GameModels";
 import AppButton from "../components/AppButton";
+import { getGameState, postGuess } from "../service/GameService";
 
 function Game() {
   const { isLoading, setIsLoading } = useLoading();
   const [gameState, setGameState] = useState<GameStateDto>();
   const [guess, setGuess] = useState<string>("");
 
-  const submitGuess = async (e?: React.SubmitEvent) => {
-    e?.preventDefault();
+  const submitGuess = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsLoading(true);
-    // mock fetching data
-    const timeout = setTimeout(() => {
-      setGameState(mockStateAfterWrongGuess1);
+    try {
+      const newState = await postGuess({ guess });
+      setGameState(newState);
       setGuess("");
-
+    } finally {
       setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
+    }
   };
 
   useEffect(() => {
     setIsLoading(true);
-    // mock fetching data
-    const timeout = setTimeout(() => {
-      setGameState(mockStateStartGame);
-
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
+    getGameState()
+      .then(setGameState)
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
