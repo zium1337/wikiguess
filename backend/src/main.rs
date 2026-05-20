@@ -35,7 +35,7 @@ pub struct AppState {
         routes::post_user_stats,
     ),
     components(schemas(
-        User, Article, GuessCount,
+        UserApiResponse, Article, GuessCount,
         RegisterRequest, LoginRequest, ChangePasswordRequest,
         UserStatsRequest, UpdateArticleRequest,
         AuthResponse, ArticleStatsResponse, ArticleHistoryEntry,
