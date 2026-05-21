@@ -1,12 +1,12 @@
+use crate::auth::{create_token, AuthUser};
+use crate::models::*;
+use crate::AppState;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
     Json,
 };
 use uuid::Uuid;
-use crate::auth::{create_token, AuthUser};
-use crate::models::*;
-use crate::AppState;
 
 // --- Auth and user related ---
 
@@ -40,7 +40,13 @@ pub async fn register(
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok((StatusCode::CREATED, Json(AuthResponse { token, user: user.into() })))
+    Ok((
+        StatusCode::CREATED,
+        Json(AuthResponse {
+            token,
+            user: user.into(),
+        }),
+    ))
 }
 
 #[utoipa::path(
@@ -63,6 +69,7 @@ pub async fn login(
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
         .ok_or((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
+    // aaaaaaaaaaaaa
 
     let valid = bcrypt::verify(&input.password, &user.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -74,7 +81,10 @@ pub async fn login(
     let token = create_token(user.user_id, &state.jwt_secret)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok(Json(AuthResponse { token, user: user.into() }))
+    Ok(Json(AuthResponse {
+        token,
+        user: user.into(),
+    }))
 }
 
 #[utoipa::path(
@@ -97,7 +107,10 @@ pub async fn change_password(
     Json(input): Json<ChangePasswordRequest>,
 ) -> Result<StatusCode, (StatusCode, String)> {
     if auth.user_id != user_id {
-        return Err((StatusCode::FORBIDDEN, "Cannot change another user's password".to_string()));
+        return Err((
+            StatusCode::FORBIDDEN,
+            "Cannot change another user's password".to_string(),
+        ));
     }
 
     let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE user_id = $1")
@@ -144,7 +157,10 @@ pub async fn delete_user(
     Path(user_id): Path<Uuid>,
 ) -> Result<StatusCode, (StatusCode, String)> {
     if auth.user_id != user_id {
-        return Err((StatusCode::FORBIDDEN, "Cannot delete another user".to_string()));
+        return Err((
+            StatusCode::FORBIDDEN,
+            "Cannot delete another user".to_string(),
+        ));
     }
 
     sqlx::query("DELETE FROM guess_counts WHERE user_id = $1")
@@ -224,7 +240,7 @@ pub async fn update_today_article(
     get,
     path = "/article/stats",
     responses(
-        (status = 200, description = "Global stats for today", body = ArticleStatsResponse)
+        (status = 200, description = "Today's article stats", body = ArticleStatsResponse)
     ),
     tag = "Article"
 )]
@@ -254,7 +270,7 @@ pub async fn get_article_stats(
     post,
     path = "/article/history",
     responses(
-        (status = 200, description = "Article history with stats", body = Vec<ArticleHistoryEntry>)
+        (status = 200, description = "Article history with stats", body = [ArticleHistoryEntry])
     ),
     tag = "Article"
 )]

@@ -1,6 +1,8 @@
 mod auth;
 mod models;
 mod routes;
+mod scheduler;
+mod wikipedia;
 
 use axum::{
     routing::{delete, get, patch, post},
@@ -33,7 +35,7 @@ pub struct AppState {
         routes::post_user_stats,
     ),
     components(schemas(
-        User, Article, GuessCount,
+        UserApiResponse, Article, GuessCount,
         RegisterRequest, LoginRequest, ChangePasswordRequest,
         UserStatsRequest, UpdateArticleRequest,
         AuthResponse, ArticleStatsResponse, ArticleHistoryEntry,
@@ -70,13 +72,21 @@ async fn main() {
     dotenvy::dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "dev-secret-change-me".to_string());
+    let jwt_secret =
+        std::env::var("JWT_SECRET").unwrap_or_else(|_| "dev-secret-change-me".to_string());
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
         .await
         .expect("Failed to connect to database");
+
+    let http_client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .expect("Failed to build HTTP client");
+
+    scheduler::spawn_daily_article_task(pool.clone(), http_client);
 
     let state = AppState { pool, jwt_secret };
 
