@@ -4,6 +4,11 @@ export interface RegisterDto {
   password: string;
 }
 
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
 export interface UserDto {
   id: string;
   username: string;
@@ -15,7 +20,11 @@ export interface AuthResponse {
   user: UserDto;
 }
 
-export type AuthErrorCode = "USERNAME_TAKEN" | "AUTH_ERROR";
+export type AuthErrorCode =
+  | "USERNAME_TAKEN"
+  | "PASSWORD_INCORRECT"
+  | "EMAIL_NOT_FOUND"
+  | "AUTH_ERROR";
 
 export class AuthError extends Error {
   code: AuthErrorCode;
