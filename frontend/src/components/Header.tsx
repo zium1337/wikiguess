@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
+import AppButton from "./AppButton";
+import { useAuth } from "../store/AuthContext";
 
 const Header = () => {
-  // mock for now
-  // will later implement preventing access via direct URL if not authenticated)
-  const isLoggedIn = false;
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className="mb-20">
@@ -15,17 +15,23 @@ const Header = () => {
         <nav className="flex gap-10 items-center">
           <Link to="/game">Game</Link>
 
-          {!isLoggedIn && (
+          {!isAuthenticated && (
             <>
               <Link to="/register">Register</Link>
               <Link to="/login">Log in</Link>
             </>
           )}
 
-          {isLoggedIn && (
+          {isAuthenticated && (
             <>
               <Link to="/profile">Profile</Link>
               <Link to="/stats">Stats</Link>
+              <AppButton
+                text="Log out"
+                width={150}
+                height={50}
+                onClick={logout}
+              />
             </>
           )}
         </nav>
