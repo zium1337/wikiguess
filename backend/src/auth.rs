@@ -69,3 +69,17 @@ impl FromRequestParts<AppState> for AuthUser {
         })
     }
 }
+
+/// Optionally extracts `user_id` from an `Authorization: Bearer <jwt>` header.
+/// Returns `None` if header missing, malformed, or token invalid.
+pub fn try_extract_user_id(headers: &axum::http::HeaderMap, secret: &str) -> Option<Uuid> {
+    let header = headers.get("Authorization")?.to_str().ok()?;
+    let token = header.strip_prefix("Bearer ")?;
+    let data = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_bytes()),
+        &Validation::default(),
+    )
+    .ok()?;
+    Some(data.claims.sub)
+}

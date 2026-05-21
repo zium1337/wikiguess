@@ -12,9 +12,11 @@ chrono = { version = "0.4.44", features = ["serde"] }
 dotenvy = "0.15.7"
 axum = "0.8.8"
 tower-http = { version = "0.6.8", features = ["cors"] }
-jsonwebtoken = "10.3.0"
+jsonwebtoken = { version = "10.3.0", features = ["rust_crypto"] }
 bcrypt = "0.19.0"
 reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 serde_json = "1.0"
 utoipa = { version = "5.4.0", features = ["axum_extras", "uuid", "chrono"] }
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+axum-extra = { version = "0.10", features = ["cookie"] }
+time = "0.3"
