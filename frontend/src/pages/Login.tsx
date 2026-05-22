@@ -68,6 +68,7 @@ function Login() {
         setUserInput={setPassword}
         width={800}
         height={80}
+        type="password"
       />
 
       <AppButton text="Log in" width={400} height={90} />
