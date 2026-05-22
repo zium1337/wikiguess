@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BACKEND_BASE_URL = "http://localhost:3000";
+const BACKEND_BASE_URL = import.meta.env.VITE_API_URL ?? "";
 const TOKEN_STORAGE_KEY = "auth.token";
 
 export const api = axios.create({
