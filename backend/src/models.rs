@@ -101,3 +101,47 @@ pub struct ArticleHistoryEntry {
     pub article: Article,
     pub stats: ArticleStatsResponse,
 }
+
+#[derive(Debug, sqlx::FromRow)]
+pub struct GameSession {
+    pub session_id: Uuid,
+    pub user_id: Option<Uuid>,
+    pub article_id: Uuid,
+    pub revealed_count: i32,
+    pub guesses_used: i32,
+    pub status: String,
+    #[allow(dead_code)] // populated by SELECT *, kept for schema fidelity
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct SentenceDto {
+    pub index: i32,
+    pub text: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, ToSchema)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum GameStatus {
+    InProgress,
+    Won,
+    Lost,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct GameStateDto {
+    pub total_sentences_num: i32,
+    pub guesses_left_num: i32,
+    pub revealed_sentences: Vec<SentenceDto>,
+    pub game_status: GameStatus,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub article_title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub article_url: Option<String>,
+}
+
+#[derive(Deserialize, ToSchema)]
+pub struct GuessRequest {
+    pub guess: String,
+}
