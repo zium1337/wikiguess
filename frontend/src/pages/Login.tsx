@@ -35,6 +35,10 @@ function Login() {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // mock fetching data
+>>>>>>> main
     setIsLoading(true);
 
     try {
@@ -68,7 +72,10 @@ function Login() {
         setUserInput={setPassword}
         width={800}
         height={80}
+<<<<<<< HEAD
         type="password"
+=======
+>>>>>>> main
       />
 
       <AppButton text="Log in" width={400} height={90} />
