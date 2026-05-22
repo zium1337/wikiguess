@@ -45,7 +45,6 @@ function Register() {
       return;
     }
 
-    // mock fetching data
     setIsLoading(true);
 
     try {

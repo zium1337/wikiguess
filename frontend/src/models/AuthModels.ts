@@ -10,9 +10,10 @@ export interface LoginDto {
 }
 
 export interface UserDto {
-  id: string;
+  user_id: string;
   username: string;
   email: string;
+  created_at: string;
 }
 
 export interface AuthResponse {
