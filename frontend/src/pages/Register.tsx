@@ -45,6 +45,10 @@ function Register() {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // mock fetching data
+>>>>>>> main
     setIsLoading(true);
 
     try {
@@ -87,7 +91,10 @@ function Register() {
         setUserInput={setPassword}
         width={800}
         height={80}
+<<<<<<< HEAD
         type="password"
+=======
+>>>>>>> main
       />
       <InputField
         placeholderText="Confirm Password..."
@@ -95,7 +102,10 @@ function Register() {
         setUserInput={setPasswordConfirmation}
         width={800}
         height={80}
+<<<<<<< HEAD
         type="password"
+=======
+>>>>>>> main
       />
 
       <AppButton text="Register account" width={400} height={90} />

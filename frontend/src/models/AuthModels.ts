@@ -10,6 +10,7 @@ export interface LoginDto {
 }
 
 export interface UserDto {
+<<<<<<< HEAD
   user_id: string;
   username: string;
   email: string;
@@ -19,6 +20,11 @@ export interface UserDto {
 export interface PasswordChangeDto {
   new_password: string;
   old_password: string;
+=======
+  id: string;
+  username: string;
+  email: string;
+>>>>>>> main
 }
 
 export interface AuthResponse {

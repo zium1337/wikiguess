@@ -4,10 +4,16 @@ import { AuthError } from "../models/AuthModels";
 export const mockAuthSuccess: AuthResponse = {
   token: "mock.jwt.token.value",
   user: {
+<<<<<<< HEAD
     user_id: "user-mock-1",
     username: "Mock_User",
     email: "mock.user@example.com",
     created_at: "2026-01-01T00:00:00.000Z",
+=======
+    id: "user-mock-1",
+    username: "Mock_User",
+    email: "mock.user@example.com",
+>>>>>>> main
   },
 };
 
