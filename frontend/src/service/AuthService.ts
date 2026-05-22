@@ -3,6 +3,7 @@ import {
   AuthError,
   type AuthResponse,
   type LoginDto,
+  type PasswordChangeDto,
   type RegisterDto,
 } from "../models/AuthModels";
 import { api } from "./AppService";
@@ -23,6 +24,31 @@ export const login = async (dto: LoginDto): Promise<AuthResponse> => {
   try {
     const response = await api.post<AuthResponse>(LOGIN_URL, dto);
     return response.data;
+  } catch (err) {
+    throw mapToAuthError(err);
+  }
+};
+
+export const changePassword = async (
+  dto: PasswordChangeDto,
+  userId: string,
+): Promise<void> => {
+  try {
+    await api.patch(`/user/change-password/${userId}`, dto);
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response?.status === 401) {
+      throw new AuthError(
+        "PASSWORD_INCORRECT",
+        "Current password is incorrect.",
+      );
+    }
+    throw mapToAuthError(err);
+  }
+};
+
+export const deleteAccount = async (userId: string): Promise<void> => {
+  try {
+    await api.delete(`/user/${userId}`);
   } catch (err) {
     throw mapToAuthError(err);
   }
